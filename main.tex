@@ -16,7 +16,7 @@ backend=biber
 \addbibresource{references.bib} %Imports bibliography file
 
 
-\usepackage{graphicx}
+\usepackage{graphicx,amsmath,bm}
 
 \begin{document}
 
@@ -24,24 +24,24 @@ backend=biber
 
 \maketitle
 
+%INTRO
+	%Introduction and problem definition for Hyperparameters and Hyperparameter Search
+	\section{Hyper-Parameters}
 
-%Introduction and problem definition for Hyperparameters and Hyperparameter Search
-\section{Hyper-Parameters}
-
-	Hyper-parameter optimisation is traditionally considered a noisy, black-box optimisation problem. A manual search combing a grid search and expert knowledge has been the standard approach to this problem in the past. It was shown that a random search could perform as well as, or better than, grid search in the same time \cite{50}. This type of search has become a minimum benchmark or starting point for many hyper-parameter optimisation techniques. \cite{39}\cite{48} Recently, taking advantage of the increase in parallel and cloud computing power has become a key aspect of these systems, requiring robust methods that can operate efficiently at scale. Hyper-parameters can contain continuous, discrete and categorical variables requiring flexible approaches to find optimal solutions across a wide range of architectures and algorithms. 
-
-
-
-%Closer look at the specific issues linked to Architecture search and NAS i.e. graphs, cells
-\section {Architecture Search}
-
-	There has been an increase in interest in Neural Architecture Search (NAS) recently as these methods began to outperform human designed models. \cite{51}\cite{41} These systems are able to design at scale creating intricate topologies for large, deep neural networks (DNN), while discovering novel variants in the components used to build these networks. \cite{25} \cite{4}
+		Hyper-parameter optimisation is traditionally considered a noisy, black-box optimisation problem. A manual search combing a grid search and expert knowledge has been the standard approach to this problem in the past. It was shown that a random search could perform as well as, or better than, grid search in the same time \cite{50}. This type of search has become a minimum benchmark or starting point for many hyper-parameter optimisation techniques. \cite{39}\cite{48} Recently, taking advantage of the increase in parallel and cloud computing power has become a key aspect of these systems, requiring robust methods that can operate efficiently at scale. Hyper-parameters can contain continuous, discrete and categorical variables requiring flexible approaches to find optimal solutions across a wide range of architectures and algorithms. 
 
 
 
-	%%%Micro vs macro 
-	
-	%%%Refinement of search space over time
+	%Closer look at the specific issues linked to Architecture search and NAS i.e. graphs, cells
+	\section {Architecture Search}
+
+		There has been an increase in interest in Neural Architecture Search (NAS) recently as these methods began to outperform human designed models. \cite{51}\cite{41} These systems are able to design at scale creating intricate topologies for large, deep neural networks (DNN), while discovering novel variants in the components used to build these networks. \cite{25} \cite{4}
+
+
+
+		%%%Micro vs macro 
+		
+		%%%Refinement of search space over time
 
 
 
@@ -137,105 +137,160 @@ backend=biber
 
 \section {Bayesian Optimisation}
 
-	Bayesian Optimisation (BO) methods have become popular over the last couple of years due to the SOTA performance they can produce \cite{32} \cite{20}. One of the core weaknesses of BO is the computationally expensive nature of the many BO methods in particular Sequential Model-based Bayesian Optimisation (SMBO). 
-
+	Bayesian Optimisation (BO) methods for hyper-parameter optimisation have become popular over the last decade due to the SOTA performance they can produce \cite{32} \cite{20}. One of the core weaknesses of many BO implementations is the lack of scalability, with models such as Gaussian Processes computationally scaling cubically with observations.
 	\par
 
-	The objective of BO, in the context of hyper-parameter optimisation, can be described as trying to minimize \(x^* = argmin~ f(x)\) where \(x \in X\) and \(X \subseteq \mathbf{R} ^k\), \textit{X} is bounded and compact and \textit{k} is the number of hyper-parameters. This method assumes a correlation between observations and endeavours to produce useful points for evaluating, \textit{x}, by exploiting a model constructed based upon a set of function observations \( D = \{(x_n,y_n)\}_{n=1}^N\) where \(y_n \sim \mathcal{N}(f(x), \sigma^2) \).
+	The objective of BO and SMBO in general, in the context of hyper-parameter optimisation, can be described as trying to find \(x^* = argmin~ f(x)\) where \(x \in X\) and \(X \subseteq \mathbf{R} ^k\), \textit{X} is a bounded and compact region and \textit{k} is the dimensionality of the search space in our case the number of hyper-parameters. These methods assume correlation between observations and endeavour to use all of the available information to produce useful points for evaluating, \textit{x}, by exploiting a model constructed based upon a set of function query, observations pairs \( D = \{(x_n,y_n)\}_{n=1}^N\) where \(y_n \sim \mathcal{N}(f(x), \sigma_n^2) \).
 
-
-	\begin{itemize}
-
-	\item assumes correlation between function evaluations
-
-	\item uses fantasises in [17]
-
-	\end{itemize}
 
 
 
 	\subsection{Posterior Model}
 
-		The model in a BO problem makes estimations of the modelled function, in our case validation score across hyper-parameter space, while maintaining a measurement of uncertainty. The model returns a mean and variance prediction for a function f(x) at point x. \cite{35} 
-
-		\begin{itemize}
-
-		\item 
-
-		\item 
-
-		\end{itemize}
+		A posterior model uses the observation history \textit{D} often in combination with some prior to make estimation about the function \textit{f}. These models generally model the value of \textit{f} across the input space, either directly or indirectly, while also having some measure of uncertainty.
 
 
 
 
 		\subsubsection{Gaussian Process}
 
-			The most common model used in hyper-parameter optimisation is a Gaussian Process (GP)\cite{17}. The GP is a priors over function which produces a distribution for the value of f(x) from a point x. The Gaussian Processes is widely used due to its flexibility as well as the simplicity of computing of many common acquisition functions from it.
+			The most common model used in hyper-parameter optimisation is a Gaussian Process (GP)\cite{17}. The Gaussian process is non-parametric model which is widely used due to its flexibility and simplicity, allowing many common acquisition functions to be described in a closed form, while having a well calibrated measure of uncertainty.
+			\par
+			A GP can be considered a generalisation of a multivariate Gaussian distribution to an infinite number of variables. In our case this denotes all possible values within the bounded region \textit{X}. A Gaussian process is fully defined, analogously to a Gaussian distribution, by a mean, \(m(x)\) and covariance function \(K(x,x')\), it is common to use \(m(x) = 0\) as the Gaussian process is generally robust to the mean function given sufficient data.
+
+			\begin{equation}f(x) \sim  \mathcal{N}(m(x) , K(x,x'))\end{equation}
+			\begin{equation}f(x) \sim  \mathcal{N}(0 , K(x,x'))\end{equation}
+
+			The covariance function or kernel function is used to generate the covariance matrices in a GP. The kernel is responsible for how both the prior and posterior are expressed. The most commonly used kernel function is the \textit{Squared Exponential Kernel}. The covariance between two points is a function of their separation and a hyper-parameter \textit{l}. 
+
+			\begin{equation}K(x,x') = \sigma^2 exp\left(-\frac{\mathopen|x - x'\mathclose|^2}{2l^2}\right)\end{equation}
+
+			\begin{equation} \label{eq:ncov} K(x,x') = \sigma^2 exp\left(\sum_{i=1}^k-\frac{\mathopen|x_i - x_i'\mathclose|^2}{2l_i^2}\right)\end{equation}
+
+			\begin{equation}\label{eq:sigy} \Sigma(x,x') = K(x,x') + I \sigma_y \end{equation}
 
 
-		\begin{itemize}
+			 equation \ref{eq:ncov} shows the kernel function extended to multidimensional problem. for k dimensions there are k+3 hyper-parameters. \textit{l} is the scale length, effectively how quickly the correlation between two points decays or the horizontal scaling for each dimension. \(\sigma\) is the or the vertical scaling. \(\sigma_y\), shown in equation \ref{eq:sigy}, is a representation of noise in the evaluations, this maintains some uncertainty around evaluation points.  In hyper-parameter optimisation and other applications with noisy evaluations, Gaussian noise is added to the covariance matrix to avoid over-fitting. These hyper-parameters have a significant effect of the expression of the model and can be key to the final result, in particular \textit{l}. Because of this, these settings are normally dealt with automatically rather than hand tuned. One approach used in \cite{17} is to integrate over the hyper-parameters using Monte Carlo estimates, however this can be computationally expensive. Another common approach is to use a marginal likelihood estimates and optimise these settings via gradient descent.
+
+ 
 
 
-		\item Scales poorly in high dimentional space
+			\begin{equation}\label{eq:gp1} p(f|\theta,D) = \mathcal{GP}(0,K(x,x'))\end{equation}
 
-		\item multivariate Gaussian over an infinite number of variables, where each evaluation point is considered a random variable. 
+			\begin{equation}\label{eq:gp2} p(y|\theta,D) = \mathcal{GP}(0,K(x,x') + I\sigma_y)\end{equation}
 
 
+ 			equations \ref{eq:gp1} and \ref{eq:gp2} show a definition of Gaussian processes over an noiseless and noisy function respectively. For a point of interested, y(x'), the Gaussian process can be considered a joint distribution over the y(x') and the query observation pair history \textit{D}. Using the marginalisation property of gaussians this can be restructured as equation \ref{eq:gp4}. An estimate of \textit{y} at \textit{x'} is simply \textit{y(x')} conditioned on \textit{y(\textbf{x})} 
 
-		\item Covariance value for each pair of points \(x_1\)  and  \(x_2\) with \textit{Squared Exponential Kernel}. There are three hyper-parameters. \textit{l} is the scale length, effectively how quickly two points become uncorrelated or the horizontal scaling. \(\sigma\) is the range of values or the vertical scaling. \(\sigma_y\) is a representation of noise in the evaluations, this maintains some level of uncertainty around evaluation points.
+			\begin{equation}\label{eq:gp4} p(y(\bm{x}),y(x')) \sim \mathcal{N} \left(\begin{pmatrix}
+			0\\
+			0
+			\end{pmatrix},\begin{pmatrix}
+			K(\bm{x},\bm{x}}) & K(\bm{x},x')\\
+			K(\bm{x},x')^T &  K(x',x')
+			\end{pmatrix}\right)\end{equation}
 
-		 \[\Sigma(x_1,x_2) = K(x_1,x_2) + I\sigma_y^2\]
+			\begin{equation}\label{eq:inv} p(y(x')|y(\bm{x})) = \frac{p(\bm{x},x')}{p(\bm{x})} \sim  \mathcal{N} (K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}\bm{x},K(x,x) - K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}K(\bm{x},x')^T) \end{equation}
 
-		 \[K(x_1,x_2) = \sigma^2 exp\left(-\frac{\mathopen|x_1 - x_2\mathclose|^2}{2l^2}\right)\]
 
-		\item Formal justification?
-
-		\[ Y(x) = f(x) + \epsilon \sigma_y\]
-
-		\[ p(f(x)|\theta) = \mathcal{GP}(0,K(x,x'))\]
-
-		\[ p(Y(x)|\theta) = \mathcal{GP}(0,K(x,x')) + I\sigma_y\]
-
-		\item Setting hyperparameters (automatically)
-
-		\item Kernel -
-
-		\begin{itemize}
+			\begin{equation}p(y(x')|y(\bm{x})) = \frac{p(\bm{x},x')}{p(\bm{x})} \sim  \mathcal{N} (\mu',\sigma') \end{equation}
 
 
 
+			\begin{equation}\mu' = K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}\bm{x}\end{equation}
 
-		\end{itemize}
+			\begin{equation}\sigma' = K(x,x) - K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}K(\bm{x},x')^T\end{equation}
 
-		\end{itemize}
 
+
+			Equation \ref{eq:inv} shows the computational issue with Gaussian processes with the inversion of the posterior covariance matrix, \(K(\bm{x},\bm{x})\). This is a \((N,N)\) matrix which means the computational complexity scales cubically \(O(n^3)\) with the number of observations. This issues is further exacerbated in high dimensional search spaces causing GPs to become intractable on large high dimensional problems. Due to the expensive function evaluations in hyper-parameter optimisation, these computational expenses have, until recently, been easily justifiable. However, with the increasing ubiquity of parallel and cloud computing in ML, this limitation has lead to interest in other, more scalable models.
 
 
 		\subsubsection{Tree-Structured Parzen Estimator}
 
-			\cite{20} introduces a model based on Parzen Window Density or Kernel Density estimation, known as Tree-Structured Parzen Estimator (TPE). This was able to outperform both random and GP based Bayesian hyper-parameter optimisation on the MNIST data-set. \cite{32} has more recently used this model to great success, leading to its use as the underlying system in the popular Auto-ML tool “HyBandSter” \cite{34}
+			The Tree-Structured Parzen Estimator (TPE) is a model introduced by \cite{20} based on Parzen Window Density or Kernel Density estimation. This method was also claimed to outperform both random and GP based Bayesian hyper-parameter optimisation on the MNIST data-set \cite{20}. \cite{32} has more recently used a similar method to great success, leading to its use as the underlying system in the popular Auto-ML tool “HyBandSter” \cite{34}.
+			TPE takes an alternative approach to the GP, modelling \(p(x|y)\) and \(p(y)\) rather than \(p(y|x)\) directly. This approach makes use of Kernel Density Estimation (KDE) to build two distribution of hyper-parameter settings which is shown in Figure \ref{fig:tpe1}. equation \ref{eq:TPE} describes the criterion for discriminating between evaluations for division into either \(l(x)\) or \(g(x)\) in a maximization problem. Here \(y*\) is set to be some quantile of the evaluations \(y\) rather than the maximum, this creates two probability distributions one of high performing hyper-parameter combinations and another of lower performing combinations. 
 
+			\begin{equation}\label{eq:TPE} p(x|y) \begin{cases}
+									l(x), & \text{if } y>y*\\
+									g(x), & \text{if } y\leq y*\end{cases} \end{equation}
+
+			\begin{figure}[h]
+
+			\includegraphics[trim=20 0 0 0 ,scale=0.25]{TPE1.png}
+
+			\caption{Example of the distributions created by KDE during TPE on a 1-dimensional maximisation problem. Top shows noisy observations of a function with y* set so that l(x) contains the upper quartile of evaluation scores. The middle and lower plots show KDE with a Gaussian kernel shown by the dotted lines.}
+			\label{fig:tpe1}
+			\end{figure}
+			Query point acquisition which is discussed in section \ref{AF}, is also simple with TPE. As shown in equation \ref{eq:TPE2}, the ratio of l(x) over g(x) is maximised, this was shown to be equivalent to maximizing EI \cite{20} (Section \ref{EI} ).
+
+			\begin{equation}\label{eq:TPE2} x_{next} = argmax \frac{l(x)}{g(x)}\end{equation}
 
 
 		\subsubsection{Bayesian Neural Networks}
 
-			Another method for modelling the distribution over a function is with the use of a neural network. DNGO \cite{22} is an implementation of this that uses a Deep Neural Network in combination with a Bayesian linear regressor to create an adaptive basis regression as the surrogate function model. This approach has the advantage of scaling linearly, in terms of computation, with the number of observations rather than cubically as with a GP. This method was able to achieve parity with SOTA in hyper-parameter optimisation on CIFAR-10. BOHAMIANN \cite{40} was able to out perform DNGO on a number of hyper-parameter optimisation tasks while supporting native parallelisation, however, due to the complexity of this method, there are a number of key hyper-parameters that need to be effectively turned to produce optimal results.
+			Another method for modelling the distribution over a function is with the use of a Bayesian neural network. DNGO \cite{22} is an implementation of this that uses a Deep Neural Network in combination with a Bayesian linear regressor to create an adaptive basis regression to model the posterior. This approach has the advantage of scaling linearly, in terms of computation, with the number of observations rather than cubically as with a GP. This method was able to achieve parity with SOTA in hyper-parameter optimisation on CIFAR-10. BOHAMIANN \cite{40} is another implementation of Bayesian neural networks which was able to out perform DNGO on a number of hyper-parameter optimisation tasks while supporting native parallelisation. 
+			\par
+			One significant issue with NN based BO methods is the reliance of these techniques on well tuned hyper-parameters of their own to achieve optimal performance. This resulted in DNGO applying the more robust hyper-parameter optimisation system \textit{spearmint} (based on \cite{20}) to the system to optimise its own hyper-parameters.
 
 
 
 
-	\subsection {Acquisition Function}
+	\subsection {Acquisition Function} \label{AF}
 
-		The acquisition function is used in BO to select the next point in hyper-parameter space at which to sample. This is the component of the system that manages the exploit/explore problem. One of the key problems faced by BO is the sequential nature of the optimisation process. The acquisition function computes a point x in hyper-parameter space as the next point to be queried using data from the posterior model. Using common acquisition functions such as Expected Improvement (EI), Probability of Improvement or Upper Confidence Bound in combination with a Gaussian Process (GP), any subsequent polling for query points without updating the posterior model will simply return the same point x.
-		There are asynchronous implementations used as a solution to this problem, which commonly involve updating the posterior model as a worker completes an evaluation, producing a new query point from the updated posterior model and re-dispatching the worker. \cite{26}\cite{27}\cite{20}
-
+		The acquisition function is used in BO to select the next query point in hyper-parameter space at which to evaluate, \(x_{next}\), based on the posterior model. This can be considered the criterion against which the latent value of a point in the search space is evaluated. The exploit/explore problem is managed by this component of the system, balancing the use of known high value regions with information gain from areas with large uncertainty. Parallelisation is another important design feature of the acquisition function. Many popular and effective methods are natively sequential in nature and therefore require modification or extension to accommodate parallel query point acquisition. There are asynchronous implementations used as a solution to this problem, which commonly involve updating the posterior model as a worker completes an evaluation, producing a new query point from the updated posterior model and re-dispatching the worker. \cite{26}\cite{27}\cite{20}
 
 
-		\subsubsection{Expected Improvement / EI-MCMC}
 
-			The most common of acquisition function is expected improvement (EI) due to the fact it is considered robust and does not require hyper-parameter tuning of its own. \cite{17} EI-MCMC is an extension of this function which allows for asynchronous parrallelisation based on Monte Carlo estimates of the acquisition function.
+		\subsubsection{Expected Improvement / EI-MCMC}\label{EI}
 
+			The most common of acquisition function, in particular when paired with a GP, is Expected Improvement (EI) due to the fact it is considered robust for most problems and does not require complex hyper-parameter tuning of its own. Equation \ref{eq:ei1} defines EI, which can be described as the expectation that a query point \(x\) will improve upon the current best evaluation in the next step, leading to a greedy choice of query points. Equation \ref{eq:ei2} shows how EI can be evaluated in closed form under a GP. From this the framing of the exploration/exploitation problem in terms of \(\Delta_n\) (predicted mean - current best estimate) and predicted variance \(\sigma_n\) can be seen. EI is high when \(\Delta_n\) is large and largest when both  \(\Delta_n\) and \(\sigma_n\) are high, with the former having a much larger effect. The exploration coefficient, \(\xi\), is shown in equation \ref{eq:ei3}. This hyper-parameter limits the greediness of the criterion by devaluing the posterior mean relative to uncertainty, promoting exploration.
+
+			 
+
+			\begin{equation}\label{eq:ei1} EI_n(x) = \mathbf{E} ~max(f(x) -f(x*),0)\end{equation}
+
+			\begin{equation}\label{eq:ei2} EI_n(x) = [\Delta_n(x)]^+ \sigma_n(x)\varphi\left(\frac{\Delta_n(x)}{\sigma_n(x)}\right)  - |\Delta_n(x)| \Phi\left(-\frac{|\Delta_n(x)|}{\sigma_n(x)}\right)\end{equation}
+
+			\begin{equation}\label{eq:ei3}\Delta_n(x) = (\mu(x) - f(x*) - \xi) \end{equation}
+
+
+			Maximizing EI can be done with a number of approaches. One simplistic approach is simply to perform a grid search over the function. However, one of the beneficial attributes of EI under a GP is the often at least ones differentiable (conditional on the kernel) allowing for gradient descent to be used. it is important to note that EI tends to produce a function which is highly multi-modal, this means in practice gradient descent is restarted from a number of random locations in-order to find the global optimum. Figure \ref{fig:EI1} shows that even in simple problems EI can be multi-modal in nature.
+				
+
+			\begin{figure}[h]
+
+			\includegraphics[trim=20 0 0 0 ,scale=0.25]{EIsimp.png}
+
+			\caption{
+			Expected improvement optimising a simple one-dimensional problem over a GP for 13 iterations. Left shows the Gaussian process modelling the posterior. Right shows the value curve at selected iterations under the EI criterion.
+			}
+			\label{fig:EI1}
+
+			\end{figure}
+
+
+
+			EI-MCMC is an extension of this function which allows for parallelisation based on Monte Carlo Markov Chain estimates of the acquisition function \cite{17}. In a case where there are a set of \textit{J} points being currently evaluated in parallel, EI cannot simply be re-evaluated on the same posterior as it would produce a redundant evaluation. This approach makes a Monty Carlo estimates via slice sampling at the ongoing evaluation points \({\{x\}}_{j=1}^J\) of the evaluation outcomes, \(\{y\}_{j=1}^J\). One set of these outcomes is referred to as a 'fantasy'. Optimally, EI would be computed across all possible values for \(\{y\}_{j=1}^J\) and the next point selected by integrating over the EI outcomes. In practice this is calculated over a finite number of fantasies with the \(x_{next}\) being the argument maximizing the result of integrating over the acquisition function outputs, described in \ref{eq:EI4}.
+
+			\begin{equation}\label{eq:EI4} x_{next} = argmax~ \widehat{EI}(x; D, \theta,\{x_j\})\end{equation}
+
+
+		\subsubsection{Upper Confidence Bound}
+			Upper Confidence Bound (UCB) is an approach to query point acquisition which is optimisitic towards uncertainty. 
+
+			\begin{equation}\label{eq:UCB1} UBC(x) = \mu(x) + B_n\sigma(x) \end{equation}
+
+
+			\begin{itemize}
+
+				\item figure
+
+				\item BUCB
+
+				\item scaling factor
+
+				\item guarntee of convergence more robust than EI
 
 
 		\subsubsection{Local Penalisation}
