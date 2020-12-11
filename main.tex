@@ -16,7 +16,11 @@ backend=biber
 \addbibresource{references.bib} %Imports bibliography file
 
 
-\usepackage{graphicx,amsmath,bm}
+\usepackage{graphicx,amsmath,bm,caption}
+\usepackage[ruled,vlined]{algorithm2e}
+
+\SetKw{Init}{Initialise:}
+\SetKw{Return}{Return}
 
 \begin{document}
 
@@ -48,7 +52,53 @@ backend=biber
 
 \section {Genetic Algorithms}
 
-	Genetic algorithms borrow optimisation strategies from those found in nature. One of the main benefits of genetic algorithms is the flexibility in terms of categorical, discrete and continuous variables. GAs are naturally suited to the creation of novel topologies\cite{24} \cite{25}, and can often produce targeted architectures that deviate from the generalised templates that commonly used due to their effectiveness across a range of domains. GAs have also been used on a more granular level, creating novel variants of network components suited to a specific task \cite{25}
+	Genetic algorithms borrow optimisation strategies from those found in nature. One of the main benefits of genetic algorithms is the flexibility in terms of categorical, discrete and continuous variables. GAs are naturally suited to the creation of novel topologies\cite{24} \cite{25}, and can often produce targeted architectures that deviate from the generalised templates that commonly used due to their effectiveness across a range of domains. GAs have also been used on a more granular level, creating novel variants of network components suited to a specific task \cite{25}. Evolutionary optimisation is composed of two main processes, Mutation and Selection. Mutation in this application broadly describes an operation which alters the traits, or creates new members of, a population. Selection contrasty, is a process which contracts the population based on some criterion. This is commonly some fitness evaluation on the objective function.
+
+
+\subsection {Selection}
+	The selection process in a GA defines much of the character of the overall system, due to tenancy of naive evolutionary systems to become trapped in local optima.
+
+	The selection process can take place prior to the mutation of population or subsequently, reducing the expanded population back to its original size. This can change the expression of the overall system significantly as the former can result in a greedier search, however, the latter generally significantly larger computational costs, warm-starting or surrogate evaluation methods sub-sample the expanded population \cite{5,13,39}.
+
+
+	\subsection{Truncation Selection}
+
+		Truncation Selection or Elitist Selection is a simple approach to selection where the population is ranked by a criterion and all members below a threshold \textit{P} are eliminated. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	\subsection{Crossover and Genetic Encoding}
@@ -87,7 +137,7 @@ backend=biber
 
 		\cite{39} introduced a form of GA which takes inspiration from bandit problems called Population Based Training (PBT). This was able to outperform human tuned networks on reinforcement learning and imagine classification tasks.
 		\par
-		This is a system for hyper-parameter optimisation which utilizes a variant of the  successive-halving\cite{45} method used in Hyperband (see Sec 4.1) for early-stopping, A portion of the population abandon their search and copy the structure, hyper-parameters and weights of high performing networks. The hyper-parameters of this new replicated network are then mutated randomly to allow for more thorough examination of lucrative search spaces. \cite{13} introduces a similar system targeted at Neural Architecture Search (NAS).
+		This is a system for hyper-parameter optimisation which utilizes a variant of the  successive-halving\cite{SH} method used in Hyperband (see Sec 4.1) for early-stopping, A portion of the population abandon their search and copy the structure, hyper-parameters and weights of high performing networks. The hyper-parameters of this new replicated network are then mutated randomly to allow for more thorough examination of lucrative search spaces. \cite{13} introduces a similar system targeted at Neural Architecture Search (NAS).
 		This method of exploiting successful networks has the additional advantage of producing hyper-parameter schedules that vary over the training process.
 
 
@@ -116,21 +166,166 @@ backend=biber
 
 \section {Many-Armed Bandit and Early-Stopping}
 
-	The problem of hyper-parameter optimisation can also be framed as a many armed bandit problem. This approach seeks to find an effective balance between exploration of new hyper-parameter space and exploitation of known, high performing settings.
+
+
+	The problem of hyper-parameter optimisation can also be framed as a many armed bandit problem. 
+	A bandit problem describes a problem where an agent has a number of possible actions which yield a reward. Initially the association between an action and its reward is unknown to the agent. In a classic stochastic bandit problem, each action produces a reward randomly based on the probability distribution of reward linked to that specific action. The agent must therefore make a series of actions to gain information about reward associated with each action while also attempting to maximise the total reward. Figure \ref{fig:BPI}  shows an example of this type of problem. 
+
+	\begin{figure}[h]\label{fig:BPI}
+	
+		\centering 
+		\includegraphics[trim= 100 650 100 200 ,scale=0.35]{BanditIntro.png}
+
+
+		\caption{Bandit problem example with three actions denoted as \(x_1\),\(x_2\) and \(x_3\). Each of these actions has an probability curve over a range of reward values which represents an agents belief about the value of each action. In this case there is a much higher uncertainty in \(x_2\) than \(x_3\) which has a higher mean value. A highly greedy approach to this problem would lead to the exploitation of \(x_3\) rather than the exploration of \(x_2\), which may not the optimal solution.}
+
+
+
+	\end{figure}
+
+
 	\par
-	Early-Stopping is based on the assumption that a partially trained models performance will be predictive of its final performance.[32][47] This assumption can, however, become strained in cases where the variance in convergence time of a set of models is very large. One of the limitation of this method is the final performance with a larger computational budget. This has lead to the incorporation of bandit based strategies into Bayesian and Evolutionary techniques to improve the anytime performance as well as allowing for greater exploration. [32][47][39]
+
+	Hyper-parameter optimisation can be considered a non-stochastic variant of this problem. In this case an action or 'pull' becomes a single, or collection of, training iterations with a set of hyper-parameters. The models cost function or loss on the validation data set becomes the associated reward.  In this application it is only the simple regret that is of interest rather than the cumulative regret as it is only the final recommendation which the search is evaluated on.
+
+
+		\begin{equation}\label{eq:BP1}	l_{\theta,t} = \frac{1}{|VAL|} \sum_{i \in VAL} loss(f_{\theta,t}(x_i),y_i)\end{equation}
+
+
+
+	Equation \ref{eq:BP1} describes the reward in this application, the cost function over the validation set. where \(f_{\theta,t}\) is the function modelled by the algorithm that is being optimised, after a number of training steps \(t\) and a set of hyper-parameters \(\theta\)
+
+
+			\begin{figure}[h]
+			
+			\centering 
+			\includegraphics[trim= 100 100 100 300 ,scale=0.35]{bandit.png}
+
+
+			\caption{Four steps of the Successive Halving algorithm. This allows more resources from a set budget to be allocated to promising models. }
+			\label{fig:BP1}
+
+
+			\end{figure}
+
+
+
+	\subsection{Successive Halving}
+
+	Successive Halving is an algorithm first introduced in \ref{SH0} for stochastic bandit problems and later adapted for the non-stochastic domain of hyper-parameter optimisation \ref{SH}. This technique has become the basis for much of the bandit style approaches to hyper-parameter optimisation. In this approach the set of possible actions is constrained to a randomly initialised set of hyper-parameter settings, \(S_0\).
+	Each iteration of the algorithm has the set of models trained for a number of steps based on a budget, \(B\), and the number of models ,\(n\). after each training interval the models are evaluated according to \ref{eq:BP1}. The set of \(S_0\) is then subset to half its size based on this metric. Figure \ref{fig:BP1} shows an a series of iterations of Successive Halving which is more formally described in Algorithm \ref{alg:BP1}.
+
+
+	\par
+	
+
+		\begin{algorithm}[H]\label{alg:BP1}
+			\caption{Successive Halving for Hyper-parameter Optimisation}
+
+			\SetAlgoLined
+			\KwData{Initial Set of hyper-parameter settings S_0 = \{n\}_, budget ~B}\
+			
+			\KwInit
+			\KwResult{Final set containing single model, S_{k=log_2(n)}}\
+
+			\For {k = \{1,2,...,log_2(n)\}}
+				{
+
+				\For {j  \in S_k}
+					{
+					Train S_{k,j} ~for~ \frac{B}{|S_k|log_2(n)} steps\;
+
+					l_{k} = \{l_k,\frac{1}{|VAL|} \sum_{i \in VAL} loss(S_{j,k}(x_i),y_i)\} \;
+					
+
+					}
+
+
+				\For {j_s,j_l \in S_k,l_k}
+				{
+					\If {j_l > median(l_k)}
+						{
+
+						S_{k+1} = \{S_{k+1},j_s\}
+
+						}
+
+			
+			  	}
+			
+			}
+
+			
+		\end{algorithm}
+
+
+
+		This type of approach is also referred to as Early-Stopping and is based on the assumption that a partially trained models performance will be predictive of its final performance.[32][47] This assumption can, however, become strained in applications where the convergence time of models has a significant variance across the search space. One of the limitation of this type of solution, in particular when the initial set of models is seeded from a simple random search, is final performance with a large computational budget. Sequential methods such as Bayesian Optimisation or Genetic Algorithms are often able to achieve better performance given a large enough budget.This has lead to the incorporation of bandit based strategies into Bayesian and Evolutionary techniques to improve the any-time performance as well as allowing for greater exploration, due to the increase in efficiency. \cite{32,34,39}
 
 
 	\subsection{HyperBand}
 
-		Hyperband \cite{48} is an popular example of this strategy and has shown the effectiveness of this method, in particular with respect to anytime performance. Hyperband was able to achieve a reduction in training time of an order of magnitude over Bayesian methods while maintaining only a minor reduction in performance.
+		HyperBand \cite{HB} is an popular example of this strategy and has shown the effectiveness of this method, in particular with respect to any-time performance. HyperBand was able to achieve a reduction in training time of an order of magnitude over Bayesian methods while maintaining only a minor reduction in performance.
 
-		Hyperband can be considered a resource allocation algorithm for Successive-Halving \cite{45}, attacking the problem of balancing the resources allocated to the training of each model (n) with the total number of models trained for a fixed resource budget. Due to the variance of model convergence time between different algorithms or problem domains, this cannot be a static, fit all value. Hyperband effectively performs a grid search of values for n, running a sequence of tests for different values of n within a bounded range.
+		HyperBand can be considered a resource allocation algorithm for Successive-Halving \cite{SH}, running as a meta layer around a series of Successive-Halving inner loops which are referred to as 'brackets'. This approach attacks the problem of balancing the resources budget \(B\), between the training time for each model \(r\), with the total number of models trained \(n\). Due to the variance of model convergence time between different algorithms or problem domains, this cannot be a static, fit all value.
 
+		HyperBand effectively performs a grid search over values of n and r, running a sequence of tests for different values of n within a bounded range. 
+
+
+
+		\begin{algorithm}[H]\label{alg:HB}
+			\caption{HyperBand}
+
+			\SetAlgoLined
+			\KwData{R, \eta}\
+			
+			\Init{ \(s_{max} = \left[ log_\eta(R) \right] , B = (s_{max} +1)R\), Model evaluation scores l = \{\}}\
+
+
+
+			\For {s = \{s_{max},s_{max}-1,...,0\}}
+				{
+				n = \left[ \frac{B}{R}\frac{\eta^s}{(s+1)} \right]
+
+				r = R\eta^{-s}
+
+				S_0 \leftarrow \text{randomly\_generate\_hyperparameter\_sets}(n)
+
+				l \leftarrow SucessiveHalving*(S_0,r,\eta)
+
+				}
+			\Return{max(l)} 
+
+		\end{algorithm}
+
+		Algorithm \ref{alg:HB} describes HyperBand and its relation to Successive-Halving which is modified in this case to take a minimum amount of resources, \(r\) and \(\eta\) which denotes fraction of models which are eliminated at each round. \(R\) and \(\eta\) are user defined hyper-parameters, with the former defining the maximum resources allocated to a single model between evaluations. The total number of brackets is defined by \(s_max\). 
+
+		\begin{itemize}
+
+			\item R is the maximum resources that can be allocated to a single model between evaluations
+			\item \(S_{max}\) is the total number of rounds 
+			\item \(n_i\) is the current number of models, \(n_0\) is the initial number
+			\item \(\eta\) is the factor of models that are removed after each evaluation
+			\item \(r_i\) is the amount of resources allocated to a model  
+			\item s is the current round from \(s_{max}\) to zero
+
+		\end{itemize}
+
+		\begin{equation}
+			n = \left[ \frac{B}{R}\frac{\eta^s}{(s+1)} \right]
+		\end{equation}
+
+		\begin{equation}
+			s_{max} = \left[ log_\eta(R) \right]
+		\end{equation}
+
+		\begin{equation}
+			r = R\eta^{-s}
+		\end{equation}
 
 	\subsection{ASHA}
 
-		Asynchronous Successive Halving Algorithm (ASHA) \cite{34} is a parallelisation technique for the Successive-Halving algorithm. This method has been shown to perform as well as or better than other techniques that incorporate early stopping such as PBT, BOHB and Hyperband on a variety of hyper-parameter optimisation and NAS benchmarks.
+		Asynchronous Successive Halving Algorithm (ASHA) \cite{34} is a more recent parallelisation technique for the Successive-Halving algorithm. This method has been shown to perform as well as or better than other techniques that incorporate early stopping such as PBT, BOHB and Hyperband on a variety of hyper-parameter optimisation and NAS benchmarks.
 
 
 
@@ -190,16 +385,16 @@ backend=biber
 			K(\bm{x},x')^T &  K(x',x')
 			\end{pmatrix}\right)\end{equation}
 
-			\begin{equation}\label{eq:inv} p(y(x')|y(\bm{x})) = \frac{p(\bm{x},x')}{p(\bm{x})} \sim  \mathcal{N} (K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}\bm{x},K(x,x) - K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}K(\bm{x},x')^T) \end{equation}
+			\begin{equation}\label{eq:inv} p(y(x')|y(\bm{x})) = \frac{p(\bm{x},x')}{p(\bm{x})} \sim  \mathcal{N} (K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}y(\bm{x}),K(x',x') - K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}K(\bm{x},x')^T) \end{equation}
 
 
 			\begin{equation}p(y(x')|y(\bm{x})) = \frac{p(\bm{x},x')}{p(\bm{x})} \sim  \mathcal{N} (\mu',\sigma') \end{equation}
 
 
 
-			\begin{equation}\mu' = K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}\bm{x}\end{equation}
+			\begin{equation}\mu' = K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}y(\bm{x})\end{equation}
 
-			\begin{equation}\sigma' = K(x,x) - K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}K(\bm{x},x')^T\end{equation}
+			\begin{equation}\label{eq:gp5}\sigma' = K(x',x') - K(\bm{x},x')K(\bm{x},\bm{x}})^{-1}K(\bm{x},x')^T\end{equation}
 
 
 
@@ -242,7 +437,7 @@ backend=biber
 
 
 
-		\subsubsection{Expected Improvement / EI-MCMC}\label{EI}
+		\subsubsection{Expected Improvement}\label{EI}
 
 			The most common of acquisition function, in particular when paired with a GP, is Expected Improvement (EI) due to the fact it is considered robust for most problems and does not require complex hyper-parameter tuning of its own. Equation \ref{eq:ei1} defines EI, which can be described as the expectation that a query point \(x\) will improve upon the current best evaluation in the next step, leading to a greedy choice of query points. Equation \ref{eq:ei2} shows how EI can be evaluated in closed form under a GP. From this the framing of the exploration/exploitation problem in terms of \(\Delta_n\) (predicted mean - current best estimate) and predicted variance \(\sigma_n\) can be seen. EI is high when \(\Delta_n\) is large and largest when both  \(\Delta_n\) and \(\sigma_n\) are high, with the former having a much larger effect. The exploration coefficient, \(\xi\), is shown in equation \ref{eq:ei3}. This hyper-parameter limits the greediness of the criterion by devaluing the posterior mean relative to uncertainty, promoting exploration.
 
@@ -269,43 +464,101 @@ backend=biber
 
 			\end{figure}
 
-
+			\subsubsection{EI-MCMC}\label{EI-MCMC}
 
 			EI-MCMC is an extension of this function which allows for parallelisation based on Monte Carlo Markov Chain estimates of the acquisition function \cite{17}. In a case where there are a set of \textit{J} points being currently evaluated in parallel, EI cannot simply be re-evaluated on the same posterior as it would produce a redundant evaluation. This approach makes a Monty Carlo estimates via slice sampling at the ongoing evaluation points \({\{x\}}_{j=1}^J\) of the evaluation outcomes, \(\{y\}_{j=1}^J\). One set of these outcomes is referred to as a 'fantasy'. Optimally, EI would be computed across all possible values for \(\{y\}_{j=1}^J\) and the next point selected by integrating over the EI outcomes. In practice this is calculated over a finite number of fantasies with the \(x_{next}\) being the argument maximizing the result of integrating over the acquisition function outputs, described in \ref{eq:EI4}.
 
 			\begin{equation}\label{eq:EI4} x_{next} = argmax~ \widehat{EI}(x; D, \theta,\{x_j\})\end{equation}
 
 
-		\subsubsection{Upper Confidence Bound}
-			Upper Confidence Bound (UCB) is an approach to query point acquisition which is optimisitic towards uncertainty. 
+		\subsubsection{Upper Confidence Bound (UCB)}
+			Upper Confidence Bound (UCB) is an approach to query point acquisition which is optimistic towards uncertainty. This, ideally, results in a system which is less greedy, and consequently less likely to become trapping in local optima. Simply attempting to maximizing the information gain at each iteration, a greedy approximation of which is given by \ref{eq:UCB2}, gives a criterion for quickly reducing the global uncertainty in the posterior. In practice however, this is not efficient as not only will it produce query points where \(\mu(x)\) is known to be poor, but it fails to utilize function evaluations, \(y(x)\), entirely. This observation is an important aspect of GP-BUCB, discussed in Section \ref{BUCB}. Equation \ref{eq:UCB1} describes GP-UCB \cite{GP-UCB}, which rather than attempting to reduce across the entire function, attempts to reduce uncertainty in the proximity of the maxima. \(B_n\) is a constant which is used to scale the dependence on the uncertainty. UCB more-so than other acquisition functions requires an accurately calibrated measure of uncertainty which encapsulates \(f\) entirely.
+
+
+
+			\begin{equation}\label{eq:UCB2} x_t = argmax ~\sigma_{t-1}(x) \end{equation}
+
 
 			\begin{equation}\label{eq:UCB1} UBC(x) = \mu(x) + B_n\sigma(x) \end{equation}
-
 
 			\begin{itemize}
 
 				\item figure
 
-				\item BUCB
+				\item guarantee of convergence more robust than EI
 
-				\item scaling factor
+			\end{itemize}
 
-				\item guarntee of convergence more robust than EI
+
+		\subsubsection{Batched Upper Confidence Bound (BUCB)}\label{BUCB}
+
+		GP-BUCB is an extension to UCB introduced by \cite{GP-BUCB} which allows for parallel query point acquisition. This approach builds on the observation from the previous section on equation \ref{eq:UCB2} that the variance of the posterior model is independent of the function evaluation and dependant only on the evaluation location. This is shown in equation \ref{eq:gp5}, however, this also highlights the computational bottleneck of this process as the posterior covariance matrix inversion is still required. In order to be feasible this required a surrogate method for calculating the variance. Another issue is over confidence of the posterior model when the variance has been updated with unevaluated queries, as UCB relies heavily on this uncertainty. One solution to this is to use highly conservative confidence bounds to ensure that the true function is captured.
+
+
+			\begin{itemize}
+
+				\item computational issues
+
+				\item over confidence
+
+			\end{itemize}
 
 
 		\subsubsection{Local Penalisation}
 
-			One intuitive solution to this problem is the application of local penalization to the acquisition function in order to create batches of query points as shown in \cite{37}. However, this method can be consider as “doubly greedy” \cite{36} in cases where a greedy acquisition function is used as the basis for local penalisation.
+			One intuitive solution to this problem is the application of local penalization to an acquisition function in order to create batches of query points as shown in \cite{37}. This approach iteratively applies a penalty to the acquisition function directly for each query point in a batch. The goal of this method is to produce a set of query points which explore separate modes of the acquisition function. Algorithm \ref{alg:LP1} describes this process, where \(\varphi_j(x)\) is the local penalisation function and \(\widetilde{a_j}(x)\) is the transform of the acquisition function.
+			
+			\par \(~\)
+
+			\begin{algorithm}[H]\label{alg:LP1}
+			\caption{Local Penalisation for BO}
+			\SetAlgoLined
+			\KwData{observation history D = \{(x_n,y_n)\}_{n=1}^N, batch size ~J}\
+			\KwResult{B_J = \{x_0,...,x_J\}}\
+
+		  	x_{next,0} = a(x)\;
+
+		  	\widetilde{a_0}(x) = \leftarrow \widetilde{a}(x)\varphi_{0}(x)\;
+
+
+			\For {j =1 to J}
+			{
+				\widetilde{a_j}(x) \leftarrow \widetilde{a}(x)\varphi_{j}(x)\;
+
+			  	x_{next,j} = \widetilde{a_j}(x)\;
+
+			  }
+
+			}
+			\end{algorithm}
+
+			\par \(~\)
+
+			However, this method can be consider as “doubly greedy” \cite{36} in cases where a greedy acquisition function is used as the basis for local penalisation.
 
 
 
 
 		\subsubsection{Thompson Sampling}
 
-			Thompson Sampling (TS) is one method that has been applied to the problem of BO parrallelisation\cite{26}\cite{27}. In TS the next point to be queried (x*) is selected based on a random sampling of the posterior probability distribution. This gives theoretically grounded method for maintaining diversity in synchronise selection of evaluation points without updating the posterior distribution. This was able to outperform other parallel BO methods in hyper-parameter optimisation on the CIFAR-10 data-set. 
-			\cite{26} builds on the results of \cite{27} introduction a variant referred to as AEGiS which has a chance of performing a purely explorative evaluation rather than utilising TS.
+			Thompson Sampling (TS) is one method that has been applied to the problem of BO Parallelisation\cite{26}\cite{27}. TS has performed well when compared with other parallel BO methods on a number of hyper-parameter optimisation tasks including the CIFAR-10 data-set. 
+			Thompson sampling is an approach to the exploitation/exploration problem in which an assumption is made about the value of a variable based on a sample from a probability distribution. In the context of BO and more specifically in application under a GP, TS involves sampling across the posterior distribution to create a sample function, \(g\). The next query point can then simply be evaluated as \(x_{next} = argmax ~g(x)\). Figure \ref{fig:TS1}, shows an example of how TS can produce diverse sampling locations in parallel. Thompson Sampling was shown in \cite{27} to perform only marginally worse in parallel implementations, either synchronous or asynchronous, when compared with a sequential variation with the same number of total evaluations.
 
-			 \cite{36} puts forward a non greedy method for the parallel acquisition of query points which was able to outperform other (greedy) parallel BO systems on synthetic and real world bench-marking functions.
+
+
+			\begin{figure}[h]			\label{fig:TS1}
+
+			\includegraphics[trim=20 0 0 0 ,scale=0.25]{TS.png}
+
+			\caption{
+			Synchronise query point acquisition for a batch of five points with Thompson Sampling under a GP.
+			}
+
+
+			\end{figure}
+
+
+			A similar approach which utilizes Thompson Sampling, AEGis, introduction by \cite{26}, combines this technique with periodic random selection of query points. This method was able to outperform other Parallel BO methods on synthetic function optimisation, however, it was unable to compete with vanilla TS on hyper-parameter optimisation tasks. When compared with TS, AEGiS also performed worse as the number of workers increased.
 
 
 
@@ -333,6 +586,8 @@ backend=biber
 	[11] STNs - gradient descent for hyper-parameter optimisation
 
 	[53] Darts - gradient descent for cell architecture search  
+
+	Networrks without training
     
 
 

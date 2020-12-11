@@ -163,44 +163,6 @@
       \verb 10.1162/artl.2009.15.2.15202
       \endverb
     \endentry
-    \entry{35}{misc}{}
-      \name{author}{3}{}{%
-        {{hash=69ca5a2f1c1dc2d3ee07734e8ac8fcc8}{%
-           family={Brochu},
-           familyi={B\bibinitperiod},
-           given={Eric},
-           giveni={E\bibinitperiod}}}%
-        {{hash=f1ae6a3c05fc18b461b2a63747f694cb}{%
-           family={Cora},
-           familyi={C\bibinitperiod},
-           given={Vlad\bibnamedelima M.},
-           giveni={V\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
-        {{hash=cf269f9a5106a41ad53847a68a27db1c}{%
-           family={Freitas},
-           familyi={F\bibinitperiod},
-           given={Nando},
-           giveni={N\bibinitperiod},
-           prefix={de},
-           prefixi={d\bibinitperiod}}}%
-      }
-      \strng{namehash}{42c0695691589e8a7cb4cc629abb7900}
-      \strng{fullhash}{42c0695691589e8a7cb4cc629abb7900}
-      \strng{bibnamehash}{42c0695691589e8a7cb4cc629abb7900}
-      \strng{authorbibnamehash}{42c0695691589e8a7cb4cc629abb7900}
-      \strng{authornamehash}{42c0695691589e8a7cb4cc629abb7900}
-      \strng{authorfullhash}{42c0695691589e8a7cb4cc629abb7900}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{eprintclass}{cs.LG}
-      \field{eprinttype}{arXiv}
-      \field{title}{A Tutorial on Bayesian Optimization of Expensive Cost Functions, with Application to Active User Modeling and Hierarchical Reinforcement Learning}
-      \field{year}{2010}
-      \verb{eprint}
-      \verb 1012.2599
-      \endverb
-    \endentry
     \entry{20}{inproceedings}{}
       \name{author}{4}{}{%
         {{hash=3ae355f48ab5e9ac46c7be14eed08e6f}{%
@@ -274,6 +236,42 @@
       \field{pages}{281\bibrangedash 305}
       \range{pages}{25}
     \endentry
+    \entry{GP-BUCB}{misc}{}
+      \name{author}{3}{}{%
+        {{hash=0d20d983d88dbf2b66a97ecb07a946aa}{%
+           family={Desautels},
+           familyi={D\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+        {{hash=112eb0b147c4a7f674d015a86e5dea70}{%
+           family={Krause},
+           familyi={K\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod}}}%
+        {{hash=0161338499d5ee0649028b46aeb5d203}{%
+           family={Burdick},
+           familyi={B\bibinitperiod},
+           given={Joel},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{cd78392979bf96d933e7d0132cfa27a7}
+      \strng{fullhash}{cd78392979bf96d933e7d0132cfa27a7}
+      \strng{bibnamehash}{cd78392979bf96d933e7d0132cfa27a7}
+      \strng{authorbibnamehash}{cd78392979bf96d933e7d0132cfa27a7}
+      \strng{authornamehash}{cd78392979bf96d933e7d0132cfa27a7}
+      \strng{authorfullhash}{cd78392979bf96d933e7d0132cfa27a7}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.LG}
+      \field{eprinttype}{arXiv}
+      \field{title}{Parallelizing Exploration-Exploitation Tradeoffs with Gaussian Process Bandit Optimization}
+      \field{year}{2012}
+      \verb{eprint}
+      \verb 1206.6402
+      \endverb
+    \endentry
     \entry{17}{misc}{}
       \name{author}{3}{}{%
         {{hash=b9d827c94405733235f3f953a0691fd5}{%
@@ -308,6 +306,62 @@
       \field{year}{2012}
       \verb{eprint}
       \verb 1206.2944
+      \endverb
+    \endentry
+    \entry{GP-UCB}{article}{}
+      \name{author}{4}{}{%
+        {{hash=bba8edc4dfbbc8fe73390e4b562c9cc3}{%
+           family={Srinivas},
+           familyi={S\bibinitperiod},
+           given={Niranjan},
+           giveni={N\bibinitperiod}}}%
+        {{hash=112eb0b147c4a7f674d015a86e5dea70}{%
+           family={Krause},
+           familyi={K\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod}}}%
+        {{hash=62f00e3f321f1ecf72fcb15013b7ac86}{%
+           family={Kakade},
+           familyi={K\bibinitperiod},
+           given={Sham\bibnamedelima M.},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=c8cf7c1a08ce203f2c6af7178a4ad622}{%
+           family={Seeger},
+           familyi={S\bibinitperiod},
+           given={Matthias\bibnamedelima W.},
+           giveni={M\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \list{publisher}{2}{%
+        {Institute of Electrical}%
+        {Electronics Engineers (IEEE)}%
+      }
+      \strng{namehash}{2c16fa3411c1aa3d0602168a88a23c81}
+      \strng{fullhash}{ae919cdb8c0690103269f7e45f48a3c4}
+      \strng{bibnamehash}{ae919cdb8c0690103269f7e45f48a3c4}
+      \strng{authorbibnamehash}{ae919cdb8c0690103269f7e45f48a3c4}
+      \strng{authornamehash}{2c16fa3411c1aa3d0602168a88a23c81}
+      \strng{authorfullhash}{ae919cdb8c0690103269f7e45f48a3c4}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1557-9654}
+      \field{journaltitle}{IEEE Transactions on Information Theory}
+      \field{month}{5}
+      \field{number}{5}
+      \field{title}{Information-Theoretic Regret Bounds for Gaussian Process Optimization in the Bandit Setting}
+      \field{volume}{58}
+      \field{year}{2012}
+      \field{pages}{3250\bibrangedash 3265}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1109/tit.2011.2182033
+      \endverb
+      \verb{urlraw}
+      \verb http://dx.doi.org/10.1109/TIT.2011.2182033
+      \endverb
+      \verb{url}
+      \verb http://dx.doi.org/10.1109/TIT.2011.2182033
       \endverb
     \endentry
     \entry{37}{misc}{}
@@ -349,37 +403,6 @@
       \field{year}{2015}
       \verb{eprint}
       \verb 1505.08052
-      \endverb
-    \endentry
-    \entry{45}{misc}{}
-      \name{author}{2}{}{%
-        {{hash=240fa0e010cb30dc1e40c10157f58276}{%
-           family={Jamieson},
-           familyi={J\bibinitperiod},
-           given={Kevin},
-           giveni={K\bibinitperiod}}}%
-        {{hash=70e0fe957473b80f1b1b5dcb8e99d31e}{%
-           family={Talwalkar},
-           familyi={T\bibinitperiod},
-           given={Ameet},
-           giveni={A\bibinitperiod}}}%
-      }
-      \strng{namehash}{8d73e62313e285b2d14f05516bbefeff}
-      \strng{fullhash}{8d73e62313e285b2d14f05516bbefeff}
-      \strng{bibnamehash}{8d73e62313e285b2d14f05516bbefeff}
-      \strng{authorbibnamehash}{8d73e62313e285b2d14f05516bbefeff}
-      \strng{authornamehash}{8d73e62313e285b2d14f05516bbefeff}
-      \strng{authorfullhash}{8d73e62313e285b2d14f05516bbefeff}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{eprintclass}{cs.LG}
-      \field{eprinttype}{arXiv}
-      \field{title}{Non-stochastic Best Arm Identification and Hyperparameter Optimization}
-      \field{year}{2015}
-      \verb{eprint}
-      \verb 1502.07943
       \endverb
     \endentry
     \entry{36}{misc}{}
@@ -750,52 +773,6 @@
       \verb 1807.01774
       \endverb
     \endentry
-    \entry{48}{misc}{}
-      \name{author}{5}{}{%
-        {{hash=1f8dc2db3fb2bdd7a51ade713872affb}{%
-           family={Li},
-           familyi={L\bibinitperiod},
-           given={Lisha},
-           giveni={L\bibinitperiod}}}%
-        {{hash=240fa0e010cb30dc1e40c10157f58276}{%
-           family={Jamieson},
-           familyi={J\bibinitperiod},
-           given={Kevin},
-           giveni={K\bibinitperiod}}}%
-        {{hash=c8aac6375fc368da68554e7a98cc4ae9}{%
-           family={DeSalvo},
-           familyi={D\bibinitperiod},
-           given={Giulia},
-           giveni={G\bibinitperiod}}}%
-        {{hash=7aef26bccf2dba53f4b3c49adfb2983e}{%
-           family={Rostamizadeh},
-           familyi={R\bibinitperiod},
-           given={Afshin},
-           giveni={A\bibinitperiod}}}%
-        {{hash=70e0fe957473b80f1b1b5dcb8e99d31e}{%
-           family={Talwalkar},
-           familyi={T\bibinitperiod},
-           given={Ameet},
-           giveni={A\bibinitperiod}}}%
-      }
-      \strng{namehash}{28c4691c18a9d856cbc4bf0a9703194e}
-      \strng{fullhash}{5cff1402032f5d8014288fda8317ceda}
-      \strng{bibnamehash}{5cff1402032f5d8014288fda8317ceda}
-      \strng{authorbibnamehash}{5cff1402032f5d8014288fda8317ceda}
-      \strng{authornamehash}{28c4691c18a9d856cbc4bf0a9703194e}
-      \strng{authorfullhash}{5cff1402032f5d8014288fda8317ceda}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{eprintclass}{cs.LG}
-      \field{eprinttype}{arXiv}
-      \field{title}{Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization}
-      \field{year}{2018}
-      \verb{eprint}
-      \verb 1603.06560
-      \endverb
-    \endentry
     \entry{4}{misc}{}
       \name{author}{5}{}{%
         {{hash=36f768d557ebd6960e735fda4fd686c7}{%
@@ -1136,7 +1113,7 @@
       \field{labeltitlesource}{title}
       \field{eprintclass}{cs.LG}
       \field{eprinttype}{arXiv}
-      \field{title}{Asynchronous \epsilon-Greedy Bayesian Optimisation}
+      \field{title}{Asynchronous \epsilon -Greedy Bayesian Optimisation}
       \field{year}{2020}
       \verb{eprint}
       \verb 2010.07615
@@ -1272,6 +1249,8 @@
       \endverb
     \endentry
   \enddatalist
+  \missing{45}
+  \missing{48}
 \endrefsection
 \endinput
 
